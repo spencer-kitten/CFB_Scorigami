@@ -26,6 +26,7 @@ scores_df = pd.read_csv('CFB_scores.csv')
 
 if __name__ == "__main__":
     A = True
+    count = 0
     
     scores = {'Home':[],
               'Away':[],
@@ -53,11 +54,13 @@ if __name__ == "__main__":
         
              
                             
-        A = False
-    # Save updated data to the main csv, then reload data
-    scores = pd.DataFrame(scores)
-    scores_df = pd.concat([scores_df,scores], axis = 0)
-    scores_df.drop_duplicates(keep = 'first', inplace = True)
-    scores_df.to_csv('CFB_scores.csv',index=False)
-    scores_df = pd.read_csv('CFB_scores.csv')
-    
+        #A = False
+        # Save updated data to the main csv, then reload data
+        scores = pd.DataFrame(scores)
+        scores_df = pd.concat([scores_df,scores], axis = 0)
+        scores_df.drop_duplicates(keep = 'first', inplace = True)
+        scores_df.to_csv('CFB_scores.csv',index=False)
+        scores_df = pd.read_csv('CFB_scores.csv')
+        count += 1
+        print('Cycle %d' % (count))
+        time.sleep(60*5)
