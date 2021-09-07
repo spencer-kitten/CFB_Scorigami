@@ -25,34 +25,39 @@ scores_df = pd.read_csv('CFB_scores.csv')
 
 
 if __name__ == "__main__":
+    A = True
     
     scores = {'Home':[],
               'Away':[],
               'Year':[],
-              'ID':[]
+              'ID':[],
+              'Home_Team': [],
+              'Away_Team': []
               }
-    while True:
+    while A:
         current_year = datetime.datetime.now().year
         games = api_instance.get_games(year = current_year)
         for game_scores in games:
             if game_scores.id not in scores_df['ID'].values:
-                if game_scores.home_points != None:
+                if (game_scores.home_points != None) and (game_scores.home_team != None):
                     # Add in missing values
                     scores['Home'].append(game_scores.home_points)
                     scores['Away'].append(game_scores.away_points)
                     scores['Year'].append(current_year)
                     scores['ID'].append(game_scores.id)
+                    scores['Home_Team'].append(game_scores.home_team)
+                    scores['Away_Team'].append(game_scores.away_team)
                     
                     # Update Twitter
-                    score_test(game_scores.home_team,game_scores.home_points,game_scores.away_team,game_scores.away_points)
+                    score_test(game_scores.home_team,game_scores.home_points,game_scores.away_team,game_scores.away_points,scores_df)
         
-                    # Save updated data to the main csv, then reload data
-                    scores = pd.DataFrame(scores)
-                    scores_df = pd.concat([scores_df,scores], axis = 0)
-                    scores_df.drop_duplicates(keep = 'first', inplace = True)
-                    scores_df.to_csv('CFB_scores.csv',index=False)
-                    scores_df = pd.read_csv('CFB_scores.csv')
+             
                             
-        time.sleep(60)
-        
+        A = False
+    # Save updated data to the main csv, then reload data
+    scores = pd.DataFrame(scores)
+    scores_df = pd.concat([scores_df,scores], axis = 0)
+    scores_df.drop_duplicates(keep = 'first', inplace = True)
+    scores_df.to_csv('CFB_scores.csv',index=False)
+    scores_df = pd.read_csv('CFB_scores.csv')
     
