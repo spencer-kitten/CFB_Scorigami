@@ -20,8 +20,7 @@ from Scorigami_Tester_v1 import *
 # CFBD API
 api_instance = cfb.GamesApi(cfb.ApiClient(configuration))
    
-# Pull working data
-scores_df = pd.read_csv('CFB_scores.csv')
+
 
 
 if __name__ == "__main__":
@@ -36,12 +35,23 @@ if __name__ == "__main__":
               'Away_Team': []
               }
     while A:
+        # Pull working data
+        scores_df = pd.DataFrame()
+        scores_df = pd.read_csv('CFB_scores.csv')
         current_year = datetime.datetime.now().year
+        games = []
         games = api_instance.get_games(year = current_year)
         for game_scores in games:
             if game_scores.id not in scores_df['ID'].values:
                 if (game_scores.home_points != None) and (game_scores.home_team != None):
                     # Add in missing values
+                    scores = {'Home':[],
+                              'Away':[],
+                              'Year':[],
+                              'ID':[],
+                              'Home_Team': [],
+                              'Away_Team': []
+                              }
                     scores['Home'].append(game_scores.home_points)
                     scores['Away'].append(game_scores.away_points)
                     scores['Year'].append(current_year)
@@ -55,12 +65,24 @@ if __name__ == "__main__":
              
                             
         #A = False
-        # Save updated data to the main csv, then reload data
-        scores = pd.DataFrame(scores)
-        scores_df = pd.concat([scores_df,scores], axis = 0)
-        scores_df.drop_duplicates(keep = 'first', inplace = True)
-        scores_df.to_csv('CFB_scores.csv',index=False)
-        scores_df = pd.read_csv('CFB_scores.csv')
+                    # Save updated data to the main csv, then reload data
+                    scores = pd.DataFrame(scores)
+                    scores_df = pd.concat([scores_df,scores], axis = 0)
+                    scores_df.drop_duplicates(keep = 'first', inplace = True)
+                    scores_df.to_csv('CFB_scores.csv',index=False)
+                    
+                    scores_df = pd.DataFrame()
+                    scores_df = pd.read_csv('CFB_scores.csv')
         count += 1
-        print('Cycle %d' % (count))
-        time.sleep(60*5)
+        print('Cycle %d, Time: %d:%d:%d' % (count, datetime.datetime.now().hour,datetime.datetime.now().minute,datetime.datetime.now().second))
+        time.sleep(60*1)
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        

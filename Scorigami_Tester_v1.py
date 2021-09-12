@@ -30,10 +30,10 @@ def score_test(home_team,home_points,away_team,away_points,scores_df):
     if missing_scores[victor][loser] == missing_scores[0][0]:
         year, hteam, ateam = last_score(victor,loser,scores_df)
         status_string = ("Final Score %s %d - %s %d." % (home_team,home_points, away_team, away_points))
-        status_string1 = (" This score has happend before, no Scorigami. The last time this score happened was %d where %s played %s" % (year, hteam, ateam))
+        status_string1 = (" This score has happend before, no Scorigami. The last time this score happened was %d where %s played %s." % (year, hteam, ateam))
         status_string = status_string + status_string1
         print(status_string)
-        #api.update_status(status_string)
+        api.update_status(status_string)
     else:
         status_string = ("Final Score %s %d - %s %d." % (home_team, home_points, away_team, away_points))
         status_string1 = (" Scorigami! This score has not happend before!")
@@ -56,8 +56,8 @@ def last_score(home_points,away_points,scores_df):
         h = scores_df.iloc[game]['Home']
         a = scores_df.iloc[game]['Away']
         if ((h == home_points) and (a == away_points)) or ((a == home_points) and (h == away_points)) :
-            year = scores_df.iloc[game]['Year']
-            hteam = scores_df.iloc[game]['Home_Team']
-            ateam = scores_df.iloc[game]['Away_Team']
+            year = scores_df.loc[game]['Year']
+            hteam = scores_df.loc[game]['Home_Team']
+            ateam = scores_df.loc[game]['Away_Team']
             return year, hteam, ateam
     return 0000, 'ERROR', 'ERROR'
