@@ -16,31 +16,33 @@ import time
 from CFBD_Access import *
 from Twitter_Access import *
 from Scorigami_Tester_v1 import *
+from new_scorigami import *
+from missing_updater import *
 
 # CFBD API
 api_instance = cfb.GamesApi(cfb.ApiClient(configuration))
    
+# Load Hashtags
+hashtags = pd.read_csv('Hashtags.csv')
 
-
+# Create list to store weekly scorigamis 
+weekly_scorigami_list = []
 
 if __name__ == "__main__":
-    A = True
+    RUN = True
+    new = True
     count = 0
     
-    scores = {'Home':[],
-              'Away':[],
-              'Year':[],
-              'ID':[],
-              'Home_Team': [],
-              'Away_Team': []
-              }
-    while A:
+    while RUN:
+        
         # Pull working data
         scores_df = pd.DataFrame()
         scores_df = pd.read_csv('CFB_scores.csv')
         current_year = datetime.datetime.now().year
         games = []
         games = api_instance.get_games(year = current_year)
+        
+        # Iterate over all games this year. If scores have been updated, append data to working df and save.
         for game_scores in games:
             if game_scores.id not in scores_df['ID'].values:
                 if (game_scores.home_points != None) and (game_scores.home_team != None):
@@ -59,12 +61,10 @@ if __name__ == "__main__":
                     scores['Home_Team'].append(game_scores.home_team)
                     scores['Away_Team'].append(game_scores.away_team)
                     
-                    # Update Twitter
-                    score_test(game_scores.home_team,game_scores.home_points,game_scores.away_team,game_scores.away_points,scores_df)
-        
-             
-                            
-        #A = False
+                    # Update Twitter & store scorigami
+                    working_scorigami_store = score_test(game_scores.home_team,game_scores.home_points,game_scores.away_team,game_scores.away_points,scores_df, hashtags)
+                    weekly_scorigami_list.append(working_scorigami_store)
+                    
                     # Save updated data to the main csv, then reload data
                     scores = pd.DataFrame(scores)
                     scores_df = pd.concat([scores_df,scores], axis = 0)
@@ -73,8 +73,25 @@ if __name__ == "__main__":
                     
                     scores_df = pd.DataFrame()
                     scores_df = pd.read_csv('CFB_scores.csv')
+                    
+        # Cycle Count printed for user verification program is running.
         count += 1
-        print('Cycle %d, Time: %d:%d:%d' % (count, datetime.datetime.now().hour,datetime.datetime.now().minute,datetime.datetime.now().second))
+        day = datetime.datetime.today().weekday()
+        # 0 is Monday...
+        if (day == 0) and (new == True):
+            new_scorigami(weekly_scorigami_list)
+            new = False
+        elif day == 1:
+            weekly_scorigami_list = []
+            missing_updater()
+            new = True
+        
+        
+        hour = datetime.datetime.now().hour
+        minute = datetime.datetime.now().minute
+        second = datetime.datetime.now().second
+        
+        print('Cycle %d, Time: %d:%d:%d' % (count, hour,minute,second))
         time.sleep(60*1)
         
         
