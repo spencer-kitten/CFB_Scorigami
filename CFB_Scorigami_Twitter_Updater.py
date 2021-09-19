@@ -92,7 +92,7 @@ if __name__ == "__main__":
             new_scorigami(weekly_scorigami)
             new_score = False
             update_missing = True
-        elif (day == 1) and (update_missing = True):
+        elif (day == 1) and (update_missing == True):
             weekly_scorigami = {'ID':[],
                                 'MAX': [],
                                 'MIN': []
