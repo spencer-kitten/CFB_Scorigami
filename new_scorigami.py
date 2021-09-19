@@ -14,7 +14,7 @@ from Twitter_Access import *
 import tweepy
 import os
 
-def new_scorigami(weekly_scorigami_list):
+def new_scorigami(weekly_scorigami):
     # Twitter API
     auth = tweepy.OAuthHandler(API, API_S)
     auth.set_access_token(Access, Access_S)
@@ -51,18 +51,25 @@ def new_scorigami(weekly_scorigami_list):
     image3 = 1-image2
     image3
     
+    # Unpack dict into list of tuples
+    for i in range(0,len(weekly_scorigami['ID'])):
+        maxi = (weekly_scorigami['MAX'][i])
+        mini = (weekly_scorigami['MIN'][i])
+        working = (maxi,mini)
+        weekly_list.append(working)
+    
     # Add in new scorigamis 
-    for game3 in weekly_scorigami_list:
+    for game3 in weekly_scorigami:
         image3[game3[0],game3[1]] += 1
         
-    row_labels = range(nrows)
-    col_labels = range(ncols)
+    row_labels = range(81)
+    col_labels = range(81)
     cmap = colors.ListedColormap(['white', 'blue', 'red'])
     bounds=[0,1,2,3]
     norm = colors.BoundaryNorm(bounds, cmap.N)
-    plt.matshow(image3,cmap=cmap,norm = norm)
-    plt.xticks(range(ncols), col_labels)
-    plt.yticks(range(nrows), row_labels)
+    plt.matshow(image3[0:81,0:81],cmap=cmap,norm = norm)
+    plt.xticks(range(81), col_labels)
+    plt.yticks(range(81), row_labels)
     #plt.show()
     #plt.savefig('test.pdf', bbox_inches='tight')
     fig1 = plt.gcf()

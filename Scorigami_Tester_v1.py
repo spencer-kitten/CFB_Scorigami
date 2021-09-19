@@ -24,17 +24,17 @@ def score_test(home_team,home_points,away_team,away_points,scores_df, hashtags):
     # Save twitter @ and hashtag information for use in tweet
     try:
         home_hash = hashtags[hashtags['Team'] == home_team]['HASH'].sum()
-        home_at = hashtags[hashtags['Team'] == home_team]['AT'].sum()
+        #home_at = hashtags[hashtags['Team'] == home_team]['AT'].sum()
     except:
         home_hash = 'ERROR'
-        home_at = 'ERROR'
+        #home_at = 'ERROR'
         
     try:
         away_hash = hashtags[hashtags['Team'] == away_team]['HASH'].sum()
-        away_at = hashtags[hashtags['Team'] == away_team]['AT'].sum()
+        #away_at = hashtags[hashtags['Team'] == away_team]['AT'].sum()
     except:
         away_hash = 'ERROR'
-        away_at = 'ERROR'
+        #away_at = 'ERROR'
     
     # Reassign scores to victor and loser team vice home and away
     victor = max(home_points,away_points)
@@ -48,7 +48,7 @@ def score_test(home_team,home_points,away_team,away_points,scores_df, hashtags):
         year, hteam, ateam = last_score(victor,loser,scores_df)
         status_string = ("Final Score %s %d - %s %d.\n" % (home_team,home_points, away_team, away_points))
         status_string1 = ("No Scorigami.\nThe last time this score happened was %d where %s played %s.\n" % (year, hteam, ateam))
-        status_string2 = ('%s %s %s %s' % (home_at, home_hash, away_at, away_hash))
+        status_string2 = ('%s %s' % (home_hash, away_hash))
         status_string = status_string + status_string1 + status_string2
         print(status_string)
         api.update_status(status_string)
@@ -56,7 +56,7 @@ def score_test(home_team,home_points,away_team,away_points,scores_df, hashtags):
     else:
         status_string = ("Final Score %s %d - %s %d.\n" % (home_team, home_points, away_team, away_points))
         status_string1 = ("SCORIGAMI!!!!\n")
-        status_string2 = ('%s %s %s %s' % (home_at, home_hash, away_at, away_hash))
+        status_string2 = ('%s %s' % (home_hash, away_hash))
         status_string = status_string + status_string1 + status_string2
         print(status_string)
         api.update_status(status_string)

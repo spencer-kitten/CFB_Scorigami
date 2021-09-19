@@ -30,13 +30,13 @@ def missing_data_builder():
     # winner_df.to_csv('Missing_Scores2.csv')
     winner_df = pd.read_csv('Missing_Scores2.csv')
     
-    nrows = winner_df['MAX'].max() + 1
-    ncols = winner_df['MAX'].max() + 1
+    nrows = int(winner_df['MAX'].max()) + 1
+    ncols = int(winner_df['MAX'].max()) + 1
     image = np.zeros(nrows*ncols)
     image = image.reshape((nrows,ncols))
     
     for game in winner_df.values:
-        image[game[3], game[2]] += 1
+        image[game[2], game[1]] += 1
     # row_labels = range(nrows)
     # col_labels = range(ncols)
     # plt.matshow(image)

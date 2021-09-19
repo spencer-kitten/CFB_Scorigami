@@ -26,11 +26,15 @@ api_instance = cfb.GamesApi(cfb.ApiClient(configuration))
 hashtags = pd.read_csv('Hashtags.csv')
 
 # Create list to store weekly scorigamis 
-weekly_scorigami_list = []
+weekly_scorigami = {'ID':[],
+                    'MAX': [],
+                    'MIN': []
+                    }
 
 if __name__ == "__main__":
     RUN = True
-    new = True
+    new_score = True
+    update_missing = True
     count = 0
     
     while RUN:
@@ -63,7 +67,12 @@ if __name__ == "__main__":
                     
                     # Update Twitter & store scorigami
                     working_scorigami_store = score_test(game_scores.home_team,game_scores.home_points,game_scores.away_team,game_scores.away_points,scores_df, hashtags)
-                    weekly_scorigami_list.append(working_scorigami_store)
+                    weekly_scorigami['ID'].append(game_scores.id)
+                    weekly_scorigami['MAX'].append(max(game_scores.home_points,game_scores.away_points))
+                    weekly_scorigami['MIN'].append(min(game_scores.home_points,game_scores.away_points))
+                    
+                    # Update Missing Scores
+                    missing_updater()
                     
                     # Save updated data to the main csv, then reload data
                     scores = pd.DataFrame(scores)
@@ -77,14 +86,19 @@ if __name__ == "__main__":
         # Cycle Count printed for user verification program is running.
         count += 1
         day = datetime.datetime.today().weekday()
+        
         # 0 is Monday...
         if (day == 0) and (new == True):
-            new_scorigami(weekly_scorigami_list)
-            new = False
-        elif day == 1:
-            weekly_scorigami_list = []
-            missing_updater()
-            new = True
+            new_scorigami(weekly_scorigami)
+            new_score = False
+            update_missing = True
+        elif (day == 1) and (update_missing = True):
+            weekly_scorigami = {'ID':[],
+                                'MAX': [],
+                                'MIN': []
+                                }
+            new_score = True
+            update_missing = False
         
         
         hour = datetime.datetime.now().hour

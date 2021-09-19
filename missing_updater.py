@@ -19,8 +19,13 @@ from new_scorigami import *
 from missing_updater import *
     
 def missing_updater():
-
+    # Twitter API
+    auth = tweepy.OAuthHandler(API, API_S)
+    auth.set_access_token(Access, Access_S)
+    api = tweepy.API(auth)
     
+    # CFBD API
+    api_instance = cfb.GamesApi(cfb.ApiClient(configuration))
     
     # Pull working data
     winner_df = pd.DataFrame()
@@ -42,13 +47,15 @@ def missing_updater():
                 minimum = min(game_scores.home_team,game_scores.away_team)
                 
                 scores['ID'].append(game_scores.id)
-                scores['Home_Team'].append(maximum)
-                scores['Away_Team'].append(minimum)
+                scores['MAX'].append(maximum)
+                scores['MIN'].append(minimum)
 
                 # Save updated data to the main csv, then reload data
                 scores = pd.DataFrame(scores)
                 winner_df = pd.concat([winner_df,scores], axis = 0)
                 winner_df.drop_duplicates(keep = 'first', inplace = True)
+                winner_df['MAX'] = winner_df['MAX'].astype(int)
+                winner_df['MIN'] = winner_df['MIN'].astype(int)
                 winner_df.to_csv('Missing_Scores2.csv',index=False)
                 
                 
